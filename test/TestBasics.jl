@@ -1,7 +1,10 @@
 module TestBasics
+
+using LinearAlgebra
 using Random
 using Symbolics
 using Test
+
 using Jessamine
 using JessamineSymbolics
 
@@ -42,6 +45,9 @@ basic_sym_res = model_basic_symbolic_output(g_spec, a_check)
 sym_res = model_symbolic_output(g_spec, a_check)
 x = sym_res.x
 
+
+@show basic_sym_res
+
 @show basic_sym_res.y_sym
 @show basic_sym_res.y_num
 @show sym_res.y_sym
@@ -63,5 +69,13 @@ cvec = [c1, cx1, cx2, cx1x2]
 
 y_rni = replace_near_integer(y_num, tolerance=1e-6)
 @show y_rni
+
+a_sym = symbolic_form(g_spec, a_check)
+@show a_sym
+
+a_cf = compile_to_function(g_spec, a_check)
+@show a_cf
+
+@test norm(a_cf.(RD.xs...) - RD.y) < 1e-6
 
 end

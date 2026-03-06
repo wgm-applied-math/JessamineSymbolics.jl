@@ -1,5 +1,6 @@
 export eval_time_step_symbolic, show_symbolic, run_genome_symbolic
 export replace_near_integer
+export compile_to_function, symbolic_form
 
 """
     eval_time_step_symbolic(g_spec, genome; output_sym, scratch_sym, parameter_sym, input_sym)
@@ -52,10 +53,10 @@ running `genome`.  The parameter vector and input vector are
 `Symbolics` objects of the form `p[j]` and `x[j]`.  The variable
 names can be specified with the keyword arguments.
 
-Return a named tuple `(p, x, z)` where `p` and `x`,
-are vectors of `Symbolics` objects used to represent
-genome parameters and inputs; and `w` is
-a vector of genome outputs in symbolic form.
+Return a named tuple `(p, x, z)` where `p` and `x`, are vectors
+of `Symbolics` objects used to represent genome parameters and
+inputs; and `z` is a vector of genome outputs in symbolic form,
+equivalent to `run_genome_to_last`.
 """
 function run_genome_symbolic(
         g_spec::GenomeSpec,
@@ -67,6 +68,20 @@ function run_genome_symbolic(
 
     z = run_genome_to_last(g_spec, genome, p, x)
     return (p = p, x = x, z = z)
+end
+
+"""
+    symbolic_form(g_spec::GenomeSpec, agent::Agent)
+
+Produce a symbolic form for an agent.  Return a named tuple with
+field `x` equal to a symbol for the input array, and field `vf`
+equal to the outputs expressed in terms of `x`.
+"""
+function symbolic_form(g_spec::GenomeSpec, agent::Agent)
+    genome_sym = run_genome_symbolic(g_spec, agent.genome)
+    p_subs = Dict(genome_sym.p[j] => agent.parameter[j] for j in eachindex(genome_sym.p))
+    a_sym = substitute(genome_sym.z, p_subs)
+    return (x = genome_sym.x, vf = a_sym)
 end
 
 """
@@ -104,4 +119,76 @@ function replace_near_integer(expr::Number; tolerance = 1.0e-10)
     else
         return expr
     end
+end
+
+
+"""
+    DOTMAP
+
+(private) A mapping from standard functions to the symbols for their element-wise (dot) counterparts.
+"""
+const DOTMAP = Dict(
+    (+) => :(.+),
+    (-) => :(.-),
+    (*) => :(.*),
+    (/) => :(./),
+    (^) => :(.^),
+)
+
+"""
+    insert_dot(e)
+
+(private) Recursively traverses the expression `e`, replacing standard functions with
+the symbols for their element-wise (dot) counterparts according to `DOTMAP`.
+"""
+function insert_dot(e)
+    if isa(e, Symbol)
+        if e in [:+, :-, :*, :/, :^]
+            return Symbol("." * string(e))
+        else
+            return e
+        end
+    elseif isa(e, Function)
+        if e in keys(DOTMAP)
+            return DOTMAP[e]
+        else
+            return e
+        end
+    elseif isa(e, Expr)
+        new_args = [insert_dot(arg) for arg in e.args]
+        return Expr(e.head, new_args...)
+    else
+        return e
+    end
+end
+
+"""
+    compile_to_function(g_spec::GenomeSpec, genome::AbstractGenome)
+
+Compile a genome to a function.  The returned value is a callable
+object that takes a vector of inputs and a vector of parameters,
+and produces an array of outputs, equivalent to calling
+`run_genome_to_last`.
+"""
+
+
+"""
+    compile_to_function(g_spec::GenomeSpec, agent::Agent)
+
+Compile an agent to a function.  The returned value is a callable
+object that takes the x's as inputs and produces an output, using
+the parameter vector embedded in `agent`.  The function is
+compiled within the `JessamineSymbolics` module and should
+generally be used with dot broadcasting when called on inputs
+that are vectors.
+"""
+function compile_to_function(g_spec::GenomeSpec, agent::Agent)
+    basic_sym_res = model_basic_symbolic_output(g_spec, agent)
+    y_expr = SymbolicUtils.Code.toexpr(basic_sym_res.y_num)
+    x_expr = SymbolicUtils.Code.toexpr.(basic_sym_res.x)
+    fn_expr = :(
+        $(Expr(:tuple, x_expr...)) -> $y_expr
+    )
+    @show fn_expr
+    return @RuntimeGeneratedFunction(fn_expr)
 end
