@@ -2,5 +2,7 @@ using JessamineSymbolics
 using Test
 
 @testset "JessamineSymbolics.jl" begin
-    # Write your tests here.
+    @testset "Basics" begin
+        include("TestBasics.jl")
+    end
 end

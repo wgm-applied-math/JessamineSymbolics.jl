@@ -3,13 +3,23 @@ uuid = "d293f0e1-bc3b-41ab-aeda-c552fb2511c4"
 version = "0.2.0"
 authors = ["W. Garrett Mitchener <garrett.mitchener@gmail.com> and contributors"]
 
+[workspace]
+projects = ["test"]
+
 [deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Jessamine = "2807b6de-c4a7-4d42-9dc5-a90bb38e3ffd"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+TermInterface = "8ea1fca8-c5ef-4a55-8b96-4e9afe9c9a3c"
 
 [compat]
+Distributions = "0.25.123"
+Random = "1.11.0"
 SymbolicUtils = "4.19.0"
 Symbolics = "7.15.3"
+TermInterface = "2.0.0"
 julia = "1.12"
 
 [extras]
