@@ -32,7 +32,9 @@ function model_basic_symbolic_output(
         z_sym_row_mat = reshape(z, 1, :)
         y_sym = model_predict(mr, z_sym_row_mat; kw_args...)[1]
         y_sub = substitute(y_sym, p_subs)
-        y_num = Symbolics.simplify(y_sub)
+        # I found bugs in simplify(), so have to leave it out for now.
+        # y_num = Symbolics.simplify(y_sub)
+        y_num = y_sub
 
         return (p = p, x = x, z = z, p_subs = p_subs, z_num = z_num,
             y_sym = y_sym,
@@ -126,6 +128,7 @@ function model_symbolic_output(
         y_lim = Symbolics.limit(y_W.val, W.val, Inf)
         y_simp = Symbolics.simplify(y_lim)
         y_sub = substitute(y_simp, p_subs)
+        # NOTE: There are bugs in simplify():
         y_num = Symbolics.simplify(y_sub)
 
         return (p = p, x = x, z = z, p_subs = p_subs, z_num = z_num,
