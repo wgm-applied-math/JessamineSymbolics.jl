@@ -35,4 +35,3 @@ test = ["Test"]
 
 [sources]
 Jessamine = {url = "https://github.com/wgm-applied-math/Jessamine.jl.git", rev = "v0.3.0"}
-#Jessamine = {path = "../Jessamine.jl"}
