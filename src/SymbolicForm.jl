@@ -2,6 +2,34 @@ export eval_time_step_symbolic, show_symbolic, run_genome_symbolic
 export replace_near_integer
 export compile_to_function, symbolic_form
 
+# """
+#     ϵ
+
+# Special symbol used to handle problems with division by zero.
+# """
+# const EPSILON = Symbolics.variables(:ϵ)
+
+# """
+#     op_eval(::Reciprocal, t::Num)
+
+# Specialize the evaluation of reciprocals for symbolic `Num`
+# objects.
+# If `t` is zero, replace it with `ϵ`.
+# """
+# function Jessamine.op_eval(::Reciprocal, t::Num)
+#     if iszero(t)
+#         return 1/EPSILON
+#     else
+#         return 1/t
+#     end
+# end
+
+# function Jessamine.op_eval(
+#     ::Multiply,
+#     workspace::Jessamine.CellState{Num,Num},
+#     indices::Vector{Int64})
+# end
+
 """
     eval_time_step_symbolic(g_spec, genome; output_sym, scratch_sym, parameter_sym, input_sym)
 
@@ -65,7 +93,6 @@ function run_genome_symbolic(
         input_sym = :x)
     p = Symbolics.variables(parameter_sym, 1:(g_spec.parameter_size))
     x = Symbolics.variables(input_sym, 1:(g_spec.input_size))
-
     z = run_genome_to_last(g_spec, genome, p, x)
     return (p = p, x = x, z = z)
 end
@@ -80,7 +107,9 @@ equal to the outputs expressed in terms of `x`.
 function symbolic_form(g_spec::GenomeSpec, agent::Agent)
     genome_sym = run_genome_symbolic(g_spec, agent.genome)
     p_subs = Dict(genome_sym.p[j] => agent.parameter[j] for j in eachindex(genome_sym.p))
-    a_sym = substitute(genome_sym.z, p_subs)
+    a_sym_p = substitute(genome_sym.z, p_subs)
+    a_sym = a_sym_p
+    # a_sym = substitute(a_sym_p, Dict(EPSILON => 0))
     return (x = genome_sym.x, vf = a_sym)
 end
 
@@ -107,8 +136,9 @@ function replace_near_integer(expr::SymbolicUtils.BasicSymbolic; tolerance = 1.0
 end
 
 function replace_near_integer(expr::Num; tolerance = 1.0e-10)
-    # Originally used Symbolics.value, but that may
-    # be deprecated. Symbolics.symbolic_to_float is currently documented.
+    # Originally used Symbolics.value, but that may be
+    # deprecated. Symbolics.symbolic_to_float is currently
+    # documented.
     return Num(replace_near_integer(Symbolics.symbolic_to_float(expr); tolerance = tolerance))
 end
 
@@ -187,7 +217,7 @@ function compile_to_function(g_spec::GenomeSpec, agent::Agent)
     y_expr = SymbolicUtils.Code.toexpr(basic_sym_res.y_num)
     x_expr = SymbolicUtils.Code.toexpr.(basic_sym_res.x)
     fn_expr = :(
-        $(Expr(:tuple, x_expr...)) -> $y_expr
+        $(Expr(:tuple, x_expr...; )) -> $y_expr
     )
     @show fn_expr
     return @RuntimeGeneratedFunction(fn_expr)
