@@ -28,6 +28,15 @@ using JessamineSymbolics
 # substitute(x/y, Dict(x => 0, y => 0)) # Yields 1.
 # substitute(x*y, Dict(x => 0, y => zr)) # error
 
+# The problem actually seems to be that when computing the
+# symbolic form of a genome, the early stages can trigger this
+# error, but they would be resolved later because the final form
+# does not have any 0/0s.  That is, maybe a scratch variable (t)
+# is set to 0/0 but is not used when computing an output value
+# (z).  A floating-point calculation with that genome results in
+# some Inf and NaN, but since they only show up in scratch
+# calculations, the genome as a whole is successful.
+
 # Set up a genome that eventually does 0 times 1//0
 
 g_spec = GenomeSpec(1, 2, 1, 1, 3)
