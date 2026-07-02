@@ -44,12 +44,12 @@ index_max = workspace_size(g_spec)
 
 z1, t1, t2, p1, x1 = 1:index_max
 
-# z1 = t1 * t2 + t1
-# t1 = 1/t2
+# z1 = t1 / t2
+# t1 = 0 # A literal integer zero.
 # t2 = 0 # A literal integer zero.
 g_check = Genome(
-    [[Instruction(Multiply(), [t1, t2])],
-     [Instruction(ReciprocalAdd(), [t2])],
+    [[Instruction(Divide(), [t1, t2])],
+     [],
      []]
 )
 
