@@ -1,6 +1,6 @@
 name = "JessamineSymbolics"
 uuid = "d293f0e1-bc3b-41ab-aeda-c552fb2511c4"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["W. Garrett Mitchener <garrett.mitchener@gmail.com> and contributors"]
 
 [workspace]
@@ -18,11 +18,11 @@ TermInterface = "8ea1fca8-c5ef-4a55-8b96-4e9afe9c9a3c"
 
 [sources]
 Jessamine = {path = "../Jessamine.jl"}
-# Jessamine = {url = "https://github.com/wgm-applied-math/Jessamine.jl.git", rev = "v0.3.0"}
+# Jessamine = {url = "https://github.com/wgm-applied-math/Jessamine.jl.git", rev = "v0.4.0"}
 
 [compat]
 Distributions = "0.25.123"
-Jessamine = "0.3.0"
+Jessamine = "0.4.0"
 LinearAlgebra = "1.12.0"
 Random = "1.11.0"
 RuntimeGeneratedFunctions = "0.5.17"
