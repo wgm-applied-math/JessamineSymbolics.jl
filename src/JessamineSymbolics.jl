@@ -11,5 +11,6 @@ RuntimeGeneratedFunctions.init(@__MODULE__)
 
 include("SymbolicForm.jl")
 include("AbstractModelLayer.jl")
+include("CarefulString.jl")
 
 end

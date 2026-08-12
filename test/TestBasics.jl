@@ -69,6 +69,10 @@ cvec = [c1, cx1, cx2, cx1x2]
 
 y_rni = replace_near_integer(y_num, tolerance=1e-6)
 @show y_rni
+y_rni_j = careful_string(y_rni)
+@show y_rni_j
+y_rni_p = careful_string(y_rni, PythonStyle())
+@show y_rni_p
 
 a_sym = symbolic_form(g_spec, a_check)
 @show a_sym

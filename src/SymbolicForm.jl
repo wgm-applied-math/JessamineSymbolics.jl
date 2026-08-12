@@ -2,61 +2,15 @@ export eval_time_step_symbolic, show_symbolic, run_genome_symbolic
 export replace_near_integer
 export compile_to_function, symbolic_form
 
-# """
-#     ϵ
-
-# Special symbol used to handle problems with division by zero.
-# """
-# const EPSILON = Symbolics.variables(:ϵ)
-
-# """
-#     op_eval(::Reciprocal, t::Num)
-
-# Specialize the evaluation of reciprocals for symbolic `Num`
-# objects.
-# If `t` is zero, replace it with `ϵ`.
-# """
-# function Jessamine.op_eval(::Reciprocal, t::Num)
-#     if iszero(t)
-#         return 1/EPSILON
-#     else
-#         return 1/t
-#     end
-# end
-
-# function Jessamine.op_eval(
-#     ::Multiply,
-#     workspace::Jessamine.CellState{Num,Num},
-#     indices::Vector{Int64})
-# end
 
 """
-    ϵ
+    ε
 
 Special symbol used to handle problems with division by zero.
 """
-const EPSILON = Symbolics.variables(:ϵ)
+const EPSILON = Symbolics.variables(:ε)
 
-# """
-#     op_eval(::Reciprocal, t::Num)
 
-# Specialize the evaluation of reciprocals for symbolic `Num`
-# objects.
-# If `t` is zero, replace it with `ϵ`.
-# """
-# function Jessamine.op_eval(::Reciprocal, t::Num)
-#     if iszero(t)
-#         return 1/EPSILON
-#     else
-#         return 1/t
-#     end
-# end
-
-# function Jessamine.op_eval(
-#     ::Multiply,
-#     workspace::Jessamine.CellState{Num,Num},
-#     indices::Vector{Int64})
-# end
 
 """
     eval_time_step_symbolic(g_spec, genome; output_sym, scratch_sym, parameter_sym, input_sym)
