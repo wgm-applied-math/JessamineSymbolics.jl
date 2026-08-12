@@ -28,6 +28,15 @@ using JessamineSymbolics
 # substitute(x/y, Dict(x => 0, y => 0)) # Yields 1.
 # substitute(x*y, Dict(x => 0, y => zr)) # error
 
+# The problem actually seems to be that when computing the
+# symbolic form of a genome, the early stages can trigger this
+# error, but they would be resolved later because the final form
+# does not have any 0/0s.  That is, maybe a scratch variable (t)
+# is set to 0/0 but is not used when computing an output value
+# (z).  A floating-point calculation with that genome results in
+# some Inf and NaN, but since they only show up in scratch
+# calculations, the genome as a whole is successful.
+
 # Set up a genome that eventually does 0 times 1//0
 
 g_spec = GenomeSpec(1, 2, 1, 1, 3)
@@ -35,12 +44,12 @@ index_max = workspace_size(g_spec)
 
 z1, t1, t2, p1, x1 = 1:index_max
 
-# z1 = t1 * t2 + t1
-# t1 = 1/t2
+# z1 = t1 / t2
+# t1 = 0 # A literal integer zero.
 # t2 = 0 # A literal integer zero.
 g_check = Genome(
-    [[Instruction(Multiply(), [t1, t2])],
-     [Instruction(ReciprocalAdd(), [t2])],
+    [[Instruction(Divide(), [t1, t2])],
+     [],
      []]
 )
 
