@@ -39,11 +39,11 @@ jobs:
           version: '1.12'
       - name: Julia cache
         uses: julia-actions/cache@v3
-        - name: Install dependencies
-          # This is complicated because Jessamine is posted on GitHub.
-          # Apparently you have to develop() it, which can't be done
-          # through Project.toml.
-          run: julia --project=docs/ 'docs/setup.jl'
+      - name: Install dependencies
+        # This is complicated because Jessamine is posted on GitHub.
+        # Apparently you have to develop() it, which can't be done
+        # through Project.toml.
+        run: julia --project=docs/ 'docs/setup.jl'
       - name: Build and deploy documentation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # If authenticating with GitHub Actions token
