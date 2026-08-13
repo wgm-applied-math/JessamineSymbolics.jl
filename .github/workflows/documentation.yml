@@ -43,13 +43,7 @@ jobs:
           # This is complicated because Jessamine is posted on GitHub.
           # Apparently you have to develop() it, which can't be done
           # through Project.toml.
-          run: |
-            julia --project=docs/ -e '
-            using Pkg
-            Pkg.develop(PackageSpec(url="https://github.com/wgm-applied-math/Jessamine.jl.git", rev="v0.4.0"))
-            Pkg.develop(PackageSpec(path=pwd()))
-            Pkg.instantiate()
-            '
+          run: julia --project=docs/ 'docs/setup.jl'
       - name: Build and deploy documentation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # If authenticating with GitHub Actions token
