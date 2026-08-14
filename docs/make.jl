@@ -1,5 +1,5 @@
-using Documenter, DocumenterMarkdown
 using JessamineSymbolics
+using Documenter
 
 DocMeta.setdocmeta!(JessamineSymbolics, :DocTestSetup, :(using JessamineSymbolics); recursive=true)
 
@@ -23,6 +23,5 @@ makedocs(
 deploydocs(
     repo = "github.com/wgm-applied-math/JessamineSymbolics.jl.git",
     devbranch = "main",
-    devurl = "dev",
     versions = ["stable" => "v^", "v#.#", "dev" =>  "dev"] # Explicitly forces version tracking
 )
