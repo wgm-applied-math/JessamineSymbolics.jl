@@ -11,4 +11,7 @@ makedocs(
 # for more information.
 deploydocs(
     repo = "github.com/wgm-applied-math/JessamineSymbolics.jl.git"
+    devbranch = "main",
+    devurl = "dev",
+    versions = ["stable" => "v^", "v#.#", "dev" =>  "dev"] # Explicitly forces version tracking
 )
