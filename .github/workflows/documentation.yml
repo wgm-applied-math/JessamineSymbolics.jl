@@ -1,14 +1,13 @@
 # -*- yaml -*-
 name: Documentation
 
-# on:
-#   push:
-#     branches:
-#       - main # update to match your development branch (master, main, dev, trunk, ...)
-#     tags: '*'
-#   pull_request:
-
 on:
+  push:
+    branches:
+      - main # update to match your development branch (master, main, dev, trunk, ...)
+    tags:
+      - 'v*' # supposedly this triggers the versioned / stable documentation branches
+
   # Allow me to run it manually
   workflow_dispatch:
 
@@ -43,7 +42,7 @@ jobs:
         # This is complicated because Jessamine is posted on GitHub.
         # Apparently you have to develop() it, which can't be done
         # through Project.toml.
-        run: julia --project=docs/ 'docs/setup.jl'
+        run: julia --project=docs/ docs/setup.jl
       - name: Build and deploy documentation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # If authenticating with GitHub Actions token
