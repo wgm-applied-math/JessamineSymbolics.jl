@@ -1,9 +1,20 @@
 using Documenter, DocumenterMarkdown
 using JessamineSymbolics
 
+DocMeta.setdocmeta!(JessamineSymbolics, :DocTestSetup, :(using JessamineSymbolics); recursive=true)
+
 makedocs(
     modules = [JessamineSymbolics],
-    sitename = "Documentation for JessamineSymbolics"
+    authors="W. Garrett Mitchener <mitchenerg@charleston.edu> and others",
+    sitename="JessamineSymbolics.jl",
+    format=Documenter.HTML(;
+        canonical="https://wgm-applied-math.github.io/JessamineBenchmark.jl",
+        edit_link="main",
+        assets=String[],
+    ),
+    pages=[
+        "Home" => "index.md",
+    ],
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
